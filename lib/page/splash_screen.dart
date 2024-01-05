@@ -43,7 +43,7 @@ class SplashScreen extends StatelessWidget {
                 },
                 style: OutlinedButton.styleFrom(foregroundColor: Colors.white),
                 icon: const Icon(Icons.arrow_right_outlined),
-                label: const Text('Mulai Quis'),
+                label: const Text('Memulai Quis'),
               ),
             ],
           ),
