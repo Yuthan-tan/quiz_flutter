@@ -1,25 +1,31 @@
 import 'package:flutter/material.dart';
+
 import 'package:quiz_app/data/question.dart';
-import 'package:quiz_app/page/questions_summary.dart';
+import 'package:quiz_app/questions_summary/questions_summary.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class ResultsScreen extends StatelessWidget {
   const ResultsScreen({
     super.key,
-    required this.chooseAnswers,
+    required this.chosenAnswers,
+    required this.onRestart,
   });
 
-  final List<String> chooseAnswers;
+  final void Function() onRestart;
+  final List<String> chosenAnswers;
 
-  List<Map<String, Object>> getSummaryData() {
+  List<Map<String, Object>> get summaryData {
     final List<Map<String, Object>> summary = [];
 
-    for (var i = 0; i < chooseAnswers.length; i++) {
-      summary.add({
-        'question_index': i,
-        'question': question[i].text,
-        'correct_answer': question[i].answers[0],
-        'user_answer': chooseAnswers[i],
-      });
+    for (var i = 0; i < chosenAnswers.length; i++) {
+      summary.add(
+        {
+          'question_index': i,
+          'question': question[i].text,
+          'correct_answer': question[i].answers[0],
+          'user_answer': chosenAnswers[i]
+        },
+      );
     }
 
     return summary;
@@ -27,11 +33,12 @@ class ResultsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final summaryData = getSummaryData();
     final numTotalQuestions = question.length;
-    final numCorrectQuestions = summaryData.where((data) {
-      return data['user_answer'] == data['correct_answer'];
-    }).length;
+    final numCorrectQuestions = summaryData
+        .where(
+          (data) => data['user_answer'] == data['correct_answer'],
+        )
+        .length;
 
     return SizedBox(
       width: double.infinity,
@@ -39,22 +46,31 @@ class ResultsScreen extends StatelessWidget {
         margin: const EdgeInsets.all(40),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          // crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              'Kamu menjawab $numCorrectQuestions dari $numTotalQuestions pertanyaan yang benar!',
+              'Jawaban Yang benar $numCorrectQuestions Dari Pertanyaan $numTotalQuestions Jumlah Jawaban!',
+              style: GoogleFonts.lato(
+                color: const Color.fromARGB(255, 230, 200, 253),
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.center,
             ),
             const SizedBox(
               height: 30,
             ),
-            QuestionsSummary(summaryData: getSummaryData()),
+            QuestionsSummary(summaryData),
             const SizedBox(
               height: 30,
             ),
-            TextButton(
-              onPressed: () {},
-              child: const Text('Ulangi Pertanyaan'),
-            ),
+            TextButton.icon(
+              onPressed: onRestart,
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.white,
+              ),
+              icon: const Icon(Icons.refresh),
+              label: const Text('Ulangi Quisnya!'),
+            )
           ],
         ),
       ),
